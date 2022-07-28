@@ -1,15 +1,10 @@
 
 package presentacion;
 
-import com.sun.java.swing.plaf.windows.resources.windows;
-import excepciones.ExcepcionCerrarConexion;
-import excepciones.ExcepcionConectar;
+import excepciones.ExcepcionConsultaUsuario;
 import java.awt.Component;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.WindowConstants;
-import logica.FachadaLogica;
+import logica.Logica;
 import logica.Usuario;
 
 
@@ -134,10 +129,8 @@ public class VentanaIngresoSistema extends javax.swing.JFrame {
 
         String nombreUsuario = "";
         try {
-            nombreUsuario = FachadaLogica.consultarUsuario(usuario);
-        } catch (ExcepcionConectar ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage());
-        } catch (ExcepcionCerrarConexion ex) {
+            nombreUsuario = Logica.consultarUsuario(usuario);
+        } catch (ExcepcionConsultaUsuario ex) { 
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
 

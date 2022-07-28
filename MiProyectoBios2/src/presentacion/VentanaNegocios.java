@@ -153,35 +153,12 @@ public class VentanaNegocios extends javax.swing.JFrame {
     }//GEN-LAST:event_botonRegresarActionPerformed
 
     private void botonTerminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonTerminarActionPerformed
-        int x = JOptionPane.showConfirmDialog(null, "¿Cerrar aplicación?");
-        if (x == 0) {
-            System.exit(0);
-        }
+        
     }//GEN-LAST:event_botonTerminarActionPerformed
 
     private void botonListarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonListarActionPerformed
 
-        ResultSet rs = null;
-        String[] datos = new String[4];
-        try {
-            rs = FachadaLogica.listadoAfiliados();
-            try {
-                while (rs.next()) {
-                    datos[0] = rs.getString(1);
-                    datos[1] = rs.getString(2);
-                    datos[2] = rs.getString(3);
-                    datos[3] = rs.getString(9);
-                    model.addRow(datos);
-
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(VentanaAfiliados.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } catch (ExcepcionConectar ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage());
-        } catch (ExcepcionCerrarConexion ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage());
-        }
+        
 
     }//GEN-LAST:event_botonListarActionPerformed
 
