@@ -27,7 +27,9 @@ DROP TABLE IF EXISTS `afiliaciones`;
 CREATE TABLE `afiliaciones` (
   `fecha` date NOT NULL,
   `Afiliados_cedula` int NOT NULL,
-  PRIMARY KEY (`fecha`,`Afiliados_cedula`)
+  PRIMARY KEY (`fecha`,`Afiliados_cedula`),
+  KEY `fk_Afiliaciones_Afiliados1_idx` (`Afiliados_cedula`),
+  CONSTRAINT `fk_Afiliaciones_Afiliados1` FOREIGN KEY (`Afiliados_cedula`) REFERENCES `afiliados` (`cedula`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -37,7 +39,6 @@ CREATE TABLE `afiliaciones` (
 
 LOCK TABLES `afiliaciones` WRITE;
 /*!40000 ALTER TABLE `afiliaciones` DISABLE KEYS */;
-INSERT INTO `afiliaciones` VALUES ('2022-07-20',1111111),('2022-07-21',23232),('2022-07-22',4),('2022-07-22',6),('2022-07-22',111),('2022-07-22',777),('2022-07-22',8888),('2022-07-22',9499399),('2022-07-25',77777),('2022-07-25',2222222),('2022-07-25',45454545),('2022-07-25',46302507),('2022-07-25',555555555);
 /*!40000 ALTER TABLE `afiliaciones` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -70,7 +71,7 @@ CREATE TABLE `afiliados` (
 
 LOCK TABLES `afiliados` WRITE;
 /*!40000 ALTER TABLE `afiliados` DISABLE KEYS */;
-INSERT INTO `afiliados` VALUES (123,'Pepe','Gonzalez','Uru','OOOO','555','pepe@gmail.com','1970-05-21',2,'activo'),(478,'Jorge','Martinez','Bra','rrrrrr','444','jor@vera.com','2000-01-05',4,'activo'),(568,'Ana','Perez','Arg','yyyyy','888','ana@mail.com','1980-06-25',2,'activo'),(874,'Luis','Garcia','Uru','ppppp','777','luis@hhh.com','1997-07-08',3,'inactivo'),(999,'Maria','Lopez','Uru','tttttt','333','mar@gmail.com','1998-08-31',5,'activo');
+INSERT INTO `afiliados` VALUES (123,'Pepe','Gonzalez','Uru','xxxxx','555','pepe@gmail.com','1970-05-21',1,'inactivo'),(478,'Jorge','Martinez','Bra','rrrrrr','444','jor@vera.com','2000-01-05',4,'activo'),(568,'Ana','Perez','Arg','yyyyy','888','ana@mail.com','1980-06-25',2,'inactivo'),(874,'Luis','Garcia','Uru','ppppp','777','luis@hhh.com','1997-07-08',3,'inactivo'),(999,'Maria','Lopez','Uru','tttttt','333','mar@gmail.com','1998-08-31',5,'activo');
 /*!40000 ALTER TABLE `afiliados` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -85,13 +86,13 @@ CREATE TABLE `facturas` (
   `idfacturas` int NOT NULL AUTO_INCREMENT,
   `fecha_emision` date NOT NULL,
   `concepto` varchar(45) NOT NULL,
-  `importe` int NOT NULL,
+  `importe` double NOT NULL,
   `fecha_pago` date DEFAULT NULL,
-  `idafiliado` int NOT NULL,
+  `afiliadoced` int NOT NULL,
   PRIMARY KEY (`idfacturas`),
-  KEY `idafiliado_fk_idx` (`idafiliado`),
-  CONSTRAINT `idafiliado_fk` FOREIGN KEY (`idafiliado`) REFERENCES `afiliados` (`cedula`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  KEY `idafiliado_fk_idx` (`afiliadoced`),
+  CONSTRAINT `idafiliado_fk` FOREIGN KEY (`afiliadoced`) REFERENCES `afiliados` (`cedula`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,6 +101,7 @@ CREATE TABLE `facturas` (
 
 LOCK TABLES `facturas` WRITE;
 /*!40000 ALTER TABLE `facturas` DISABLE KEYS */;
+INSERT INTO `facturas` VALUES (6,'2022-07-01','CUOTA',1500,NULL,478),(7,'2022-07-01','CUOTA',1500,NULL,999),(8,'2022-08-01','CUOTA',1500,NULL,478),(9,'2022-08-01','CUOTA',1500,NULL,999),(10,'2022-10-01','CUOTA',1500,NULL,478),(11,'2022-10-01','CUOTA',1500,NULL,999);
 /*!40000 ALTER TABLE `facturas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -211,11 +213,13 @@ DROP TABLE IF EXISTS `tarifas`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tarifas` (
-  `concepto` varchar(45) NOT NULL,
   `fecha` date NOT NULL,
-  `importe` int NOT NULL,
-  PRIMARY KEY (`concepto`,`fecha`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  `matricula` double NOT NULL,
+  `cuota` double NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `fecha_UNIQUE` (`fecha`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -224,6 +228,7 @@ CREATE TABLE `tarifas` (
 
 LOCK TABLES `tarifas` WRITE;
 /*!40000 ALTER TABLE `tarifas` DISABLE KEYS */;
+INSERT INTO `tarifas` VALUES ('2021-05-01',4000,1200,1),('2022-05-01',5000,1500,2);
 /*!40000 ALTER TABLE `tarifas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -261,4 +266,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-07-26 20:37:12
+-- Dump completed on 2022-07-26 20:44:25
