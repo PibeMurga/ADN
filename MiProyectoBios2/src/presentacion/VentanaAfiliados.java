@@ -1,44 +1,57 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package presentacion;
 
-import com.mysql.cj.protocol.Resultset;
-import excepciones.ExcepcionCerrarConexion;
-import excepciones.ExcepcionConectar;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import excepciones.ExcepcionCedulaNoEncontrada;
+import excepciones.ExcepcionConsultaCedula;
+import excepciones.ExcepcionInactivarAfiliado;
+import excepciones.ExcepcionListarAfiliados;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import logica.Afiliado;
-import logica.FachadaLogica;
+import logica.Afiliados;
+import logica.Logica;
 
-/**
- *
- * @author Juan Diego
- */
 public class VentanaAfiliados extends javax.swing.JFrame {
 
-    /**
-     * Creates new form AbmLocales
-     */
     public VentanaAfiliados() {
         initComponents();
 
     }
 
-    public DefaultTableModel columnasTabla() {
+    public void limpiarTabla() {
+        for (int i = 0; i < tabla.getRowCount(); i++) {
+            model.removeRow(i);
+            i -= 1;
+        }
+    }
 
+        
+    public void cargarTabla() {
+
+        model.setColumnCount(0);
+        columnasTabla();
+        limpiarTabla();
+        try {
+            Afiliados afiliados;
+            afiliados = Logica.listadoAfiliadosActivos();
+            String[] datosFilaTabla = new String[3];
+            for (Afiliado afiliado : afiliados.getListaAfiliados()) {
+                datosFilaTabla[0] = afiliado.getCedula();
+                datosFilaTabla[1] = afiliado.getNombre();
+                datosFilaTabla[2] = afiliado.getApellido();
+                model.addRow(datosFilaTabla);
+            }
+
+        } catch ( ExcepcionListarAfiliados ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+
+    }
+
+    private DefaultTableModel columnasTabla() {
         model.addColumn("Cédula");
         model.addColumn("Nombre");
         model.addColumn("Apellido");
-        model.addColumn("Negocio");
         return model;
-
     }
 
     @SuppressWarnings("unchecked")
@@ -48,21 +61,20 @@ public class VentanaAfiliados extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         botonNuevo = new javax.swing.JButton();
         botonEditar = new javax.swing.JButton();
-        botonBorrar = new javax.swing.JButton();
-        botonListar = new javax.swing.JButton();
+        botonDesafiliar = new javax.swing.JButton();
+        botonBuscar = new javax.swing.JButton();
         botonRegresar = new javax.swing.JButton();
         botonTerminar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        campoBuscar = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        botonListar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setResizable(false);
-
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         botonNuevo.setBackground(new java.awt.Color(204, 255, 204));
         botonNuevo.setText("Nuevo Afiliado");
@@ -71,7 +83,6 @@ public class VentanaAfiliados extends javax.swing.JFrame {
                 botonNuevoActionPerformed(evt);
             }
         });
-        jPanel1.add(botonNuevo, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 60, -1, -1));
 
         botonEditar.setBackground(new java.awt.Color(255, 255, 204));
         botonEditar.setText("Editar Afiliado");
@@ -80,24 +91,21 @@ public class VentanaAfiliados extends javax.swing.JFrame {
                 botonEditarActionPerformed(evt);
             }
         });
-        jPanel1.add(botonEditar, new org.netbeans.lib.awtextra.AbsoluteConstraints(261, 58, -1, -1));
 
-        botonBorrar.setBackground(new java.awt.Color(255, 204, 204));
-        botonBorrar.setText("Borrar Afiliado");
-        botonBorrar.addActionListener(new java.awt.event.ActionListener() {
+        botonDesafiliar.setBackground(new java.awt.Color(255, 204, 204));
+        botonDesafiliar.setText("Desafiliar Afiliado");
+        botonDesafiliar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonBorrarActionPerformed(evt);
+                botonDesafiliarActionPerformed(evt);
             }
         });
-        jPanel1.add(botonBorrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(366, 58, -1, -1));
 
-        botonListar.setText("Buscar");
-        botonListar.addActionListener(new java.awt.event.ActionListener() {
+        botonBuscar.setText("Buscar Cédula");
+        botonBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonListarActionPerformed(evt);
+                botonBuscarActionPerformed(evt);
             }
         });
-        jPanel1.add(botonListar, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 110, -1, -1));
 
         botonRegresar.setText("< Regresar");
         botonRegresar.addActionListener(new java.awt.event.ActionListener() {
@@ -105,7 +113,6 @@ public class VentanaAfiliados extends javax.swing.JFrame {
                 botonRegresarActionPerformed(evt);
             }
         });
-        jPanel1.add(botonRegresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 390, 104, -1));
 
         botonTerminar.setText("X Terminar");
         botonTerminar.addActionListener(new java.awt.event.ActionListener() {
@@ -113,33 +120,99 @@ public class VentanaAfiliados extends javax.swing.JFrame {
                 botonTerminarActionPerformed(evt);
             }
         });
-        jPanel1.add(botonTerminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 390, 105, -1));
 
         tabla.setModel(columnasTabla());
+        cargarTabla();
         jScrollPane1.setViewportView(tabla);
-
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 144, 560, 230));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         jLabel1.setText("AFILIADOS");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 20, -1, -1));
-        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 110, 140, -1));
 
         jButton1.setText("Estado de Cuenta");
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 390, -1, -1));
 
         jButton2.setText("Pagos");
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 390, -1, -1));
+
+        botonListar.setText("Listar Todos");
+        botonListar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonListarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(250, 250, 250)
+                        .addComponent(jLabel1))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(150, 150, 150)
+                        .addComponent(botonNuevo)
+                        .addGap(10, 10, 10)
+                        .addComponent(botonEditar)
+                        .addGap(6, 6, 6)
+                        .addComponent(botonDesafiliar))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(60, 60, 60)
+                        .addComponent(jButton1)
+                        .addGap(21, 21, 21)
+                        .addComponent(jButton2)
+                        .addGap(119, 119, 119)
+                        .addComponent(botonRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(16, 16, 16)
+                        .addComponent(botonTerminar, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(40, 40, 40)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 560, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(campoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botonBuscar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(botonListar)))))
+                .addContainerGap(33, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jLabel1)
+                .addGap(13, 13, 13)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(botonNuevo))
+                    .addComponent(botonEditar)
+                    .addComponent(botonDesafiliar))
+                .addGap(27, 27, 27)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(campoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(botonBuscar)
+                    .addComponent(botonListar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(21, 21, 21)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2)
+                    .addComponent(botonRegresar)
+                    .addComponent(botonTerminar))
+                .addContainerGap(17, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 630, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -155,86 +228,104 @@ public class VentanaAfiliados extends javax.swing.JFrame {
     private void botonRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonRegresarActionPerformed
         this.dispose();
         VentanaPrincipal p = new VentanaPrincipal();
-        p.setLocationRelativeTo(null);
+        p.setLocationRelativeTo(this);
         p.setVisible(true);
 
     }//GEN-LAST:event_botonRegresarActionPerformed
 
 
-    private void botonListarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonListarActionPerformed
+    private void botonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarActionPerformed
 
-        ResultSet rs = null;
-        String[] datos = new String[4];
-        try {
-            rs = FachadaLogica.listadoAfiliados();
+        if (campoBuscar.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Digite un número de cédula");
+        } else {
+
+            Afiliado afiliadoBuscado = new Afiliado();
+            Afiliado afiliadoEncontrado;
+            String cedulaIngresada = campoBuscar.getText();
+            afiliadoBuscado.setCedula(cedulaIngresada);
             try {
-                while (rs.next()) {
-                    datos[0] = rs.getString(1);
-                    datos[1] = rs.getString(2);
-                    datos[2] = rs.getString(3);
-                    datos[3] = rs.getString(9);
-                    model.addRow(datos);
-
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(VentanaAfiliados.class.getName()).log(Level.SEVERE, null, ex);
+                afiliadoEncontrado = Logica.consultaAfiliadoPorCedula(afiliadoBuscado);
+                limpiarTabla();
+                String[] datos = new String[3];
+                datos[0] = afiliadoEncontrado.getCedula();
+                datos[1] = afiliadoEncontrado.getNombre();
+                datos[2] = afiliadoEncontrado.getApellido();
+                model.addRow(datos);
+            } catch (ExcepcionConsultaCedula | ExcepcionCedulaNoEncontrada ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage());
             }
-        } catch (ExcepcionConectar ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage());
-        } catch (ExcepcionCerrarConexion ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage());
+            campoBuscar.setText("");
         }
 
 
-    }//GEN-LAST:event_botonListarActionPerformed
+    }//GEN-LAST:event_botonBuscarActionPerformed
 
     private void botonNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonNuevoActionPerformed
 
         VentanaAfiliadosAlta v = new VentanaAfiliadosAlta();
         v.setVisible(true);
-        v.setLocationRelativeTo(null);
+        v.setLocationRelativeTo(this);
         v.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.dispose();
     }//GEN-LAST:event_botonNuevoActionPerformed
 
     private void botonEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEditarActionPerformed
 
-        int fila = tabla.getSelectedRow();
-        String cedula = (String) (model.getValueAt(fila, 0));
-        Afiliado afiliado = new Afiliado();
-        afiliado.setCedula(cedula);
-        Afiliado af=null;
-        try {
-            af=FachadaLogica.consultaAfiliadoPorCedula(afiliado);
-        } catch (ExcepcionConectar ex) {
-            Logger.getLogger(VentanaAfiliados.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ExcepcionCerrarConexion ex) {
-            Logger.getLogger(VentanaAfiliados.class.getName()).log(Level.SEVERE, null, ex);
+        int registroSeleccionado = tabla.getSelectedRow();
+        if (registroSeleccionado == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione un afiliado para modificar sus datos");
+        } else {
+            String cedulaDelRegistroSeleccionado = (String) (model.getValueAt(registroSeleccionado, 0));
+            Afiliado afiliadoBuscado = new Afiliado();
+            afiliadoBuscado.setCedula(cedulaDelRegistroSeleccionado);
+            Afiliado afiliadoEncontrado = null;
+            try {
+                afiliadoEncontrado = Logica.consultaAfiliadoPorCedula(afiliadoBuscado);
+            } catch ( ExcepcionConsultaCedula | ExcepcionCedulaNoEncontrada ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage());
+            }
+            this.dispose();
+            VentanaAfiliadosEditar ventanaEditar = new VentanaAfiliadosEditar();
+            ventanaEditar.rellenarCampos(afiliadoEncontrado);
+            ventanaEditar.setVisible(true);
+            ventanaEditar.setLocationRelativeTo(this);
+            ventanaEditar.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         }
-
-        VentanaAfiliadosEditar v = new VentanaAfiliadosEditar();
-        v.rellenarCampos(af);
-        v.setVisible(true);
-        v.setLocationRelativeTo(null);
-
-        v.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }//GEN-LAST:event_botonEditarActionPerformed
 
-    private void botonBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBorrarActionPerformed
-
+    private void botonDesafiliarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonDesafiliarActionPerformed
+        Afiliado afiliado = new Afiliado();
         int fila = tabla.getSelectedRow();
-        String cedula = (String) model.getValueAt(fila, 0);
-        String nombre = (String) model.getValueAt(fila, 1);
-        String apellido = (String) model.getValueAt(fila, 2);
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(null, "Seleccione un Afiliado de la lista");
+        } else {
+            String cedula = (String) model.getValueAt(fila, 0);
+            String nombre = (String) model.getValueAt(fila, 1);
+            String apellido = (String) model.getValueAt(fila, 2);
+            afiliado.setCedula(cedula);
 
-        int respuesta = JOptionPane.showConfirmDialog(null, "¿Confirma eliminar al siguiente afiliado?:\n "
-                + "CI = " + cedula + "\n"
-                + "Nombre = " + nombre + " " + apellido);
+            int respuesta = JOptionPane.showConfirmDialog(null, "¿Confirma DESAFILIAR al siguiente afiliado?:\n "
+                    + "CI = " + cedula + "\n"
+                    + "Nombre = " + nombre + " " + apellido);
+            String mensaje;
+            if (respuesta == 0) {
+                try {
+                    mensaje = Logica.inactivarAfiliado(afiliado);
+                    JOptionPane.showMessageDialog(null, mensaje);
+                    limpiarTabla();
+                    cargarTabla();
+                } catch (ExcepcionInactivarAfiliado  ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage());
+                }
+            }
+        }
 
-//        VentanaAfiliadosBorrar v = new VentanaAfiliadosBorrar();
-//        v.setVisible(true);
-//        v.setLocationRelativeTo(null);
-//        v.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-    }//GEN-LAST:event_botonBorrarActionPerformed
+    }//GEN-LAST:event_botonDesafiliarActionPerformed
+
+    private void botonListarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonListarActionPerformed
+        cargarTabla();
+    }//GEN-LAST:event_botonListarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -286,21 +377,22 @@ public class VentanaAfiliados extends javax.swing.JFrame {
         });
     }
 
-    DefaultTableModel model = new DefaultTableModel();
+    static DefaultTableModel model = new DefaultTableModel();
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton botonBorrar;
+    private javax.swing.JButton botonBuscar;
+    private javax.swing.JButton botonDesafiliar;
     private javax.swing.JButton botonEditar;
     private javax.swing.JButton botonListar;
     private javax.swing.JButton botonNuevo;
     private javax.swing.JButton botonRegresar;
     private javax.swing.JButton botonTerminar;
+    private javax.swing.JTextField campoBuscar;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTable tabla;
     // End of variables declaration//GEN-END:variables
 }

@@ -1,11 +1,12 @@
 package persistencia;
 
-import excepciones.ExcepcionCerrarConexion;
-import excepciones.ExcepcionConectar;
+import excepciones.ExcepcionConsultaUsuario;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import logica.Usuario;
 
 
@@ -13,7 +14,7 @@ public class PersistenciaUsuarios {
 
     private static final String CONSULTA = "SELECT * FROM adn.usuarios WHERE usuario=? and clave=?;";
 
-    public static String consultar(Usuario usuario) throws ExcepcionConectar, ExcepcionCerrarConexion {
+    public static String consultar(Usuario usuario) throws ExcepcionConsultaUsuario {
         String nombreUsuario = "";
         Connection con = PersistenciaConexion.Conectar();
         try {
@@ -25,8 +26,9 @@ public class PersistenciaUsuarios {
                 nombreUsuario = resultado.getString("nombre");
             }
         } catch (SQLException ex) {
-
-        } finally {
+            Logger.getLogger(PersistenciaUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ExcepcionConsultaUsuario("ERROR Comuníquese con soporte");
+        }  finally {
             PersistenciaConexion.cerrarConexion();
         }
         return nombreUsuario;

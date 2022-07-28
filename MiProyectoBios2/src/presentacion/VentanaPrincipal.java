@@ -144,23 +144,17 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     private void botonAbmLocalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAbmLocalesActionPerformed
         VentanaLocales a = new VentanaLocales();
-        a.setLocationRelativeTo(null);
+        a.setLocationRelativeTo(this);
         a.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_botonAbmLocalesActionPerformed
 
     private void botonAfiliacionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAfiliacionesActionPerformed
-        VentanaListadoAfiliaciones a = new VentanaListadoAfiliaciones();
-        a.setLocationRelativeTo(null);
-        a.setVisible(true);
-        this.dispose();
+        
     }//GEN-LAST:event_botonAfiliacionesActionPerformed
 
     private void botonDeudoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonDeudoresActionPerformed
-        VentanaListadoDeudores a = new VentanaListadoDeudores();
-        a.setLocationRelativeTo(null);
-        a.setVisible(true);
-        this.dispose();
+        
     }//GEN-LAST:event_botonDeudoresActionPerformed
 
     /**

@@ -1,8 +1,6 @@
-
 package logica;
 
 import java.sql.Date;
-
 
 public class Afiliado {
     
